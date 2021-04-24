@@ -14,3 +14,4 @@ mades a last request to the service
 - analytics about how many likes was made
 - write tests
 - whitenoise + gunicorn
+- use postgress db on production
