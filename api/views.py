@@ -1,8 +1,12 @@
+from datetime import datetime
+
 from django.contrib.auth import get_user_model
+from django.db.models import Count
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import action
+from rest_framework.decorators import api_view
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -48,6 +52,17 @@ class PostViewSet(viewsets.ModelViewSet):
         like_instance = get_object_or_404(Like.objects.all(), author = request.user, post_id = pk)
         if like_instance.delete():
             return Response({"success": f"Post unliked"})
+
+
+@api_view(["GET"])
+def analytics(request):
+    date_from = datetime.strptime(request.GET.get('date_from', '01-01-0000'), '%Y-%m-%d')
+    date_to = datetime.strptime(request.GET.get('date_to', '01-01-9999'), '%Y-%m-%d')
+
+    likes = Like.objects.filter(created__gte = date_from, created__lte = date_to).extra(select = {'day': 'date( created )'}) \
+        .values('day').annotate(likes = Count('created'))
+
+    return Response({'likes': likes})
 
 
 schema_view = get_schema_view(
