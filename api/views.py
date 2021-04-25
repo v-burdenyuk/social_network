@@ -56,8 +56,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
 @api_view(["GET"])
 def analytics(request):
-    date_from = datetime.strptime(request.GET.get('date_from', '01-01-0000'), '%Y-%m-%d')
-    date_to = datetime.strptime(request.GET.get('date_to', '01-01-9999'), '%Y-%m-%d')
+    date_from = datetime.strptime(request.GET.get('date_from', '0001-01-01'), '%Y-%m-%d')
+    date_to = datetime.strptime(request.GET.get('date_to', '9999-12-31'), '%Y-%m-%d')
 
     likes = Like.objects.filter(created__gte = date_from, created__lte = date_to).extra(select = {'day': 'date( created )'}) \
         .values('day').annotate(likes = Count('created'))
