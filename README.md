@@ -14,3 +14,4 @@ mades a last request to the service
 **TODO**:
 - write tests
 - whitenoise + gunicorn
+- use postgress db on production
